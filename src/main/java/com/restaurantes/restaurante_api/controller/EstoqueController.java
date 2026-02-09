@@ -31,6 +31,12 @@ public class EstoqueController {
         return ResponseEntity.ok(service.findById(id));
     }
     
+    @GetMapping("/insumo/{insumoId}")
+    @Operation(summary = "Listar estoque por insumo", description = "Retorna todos os registros de estoque do insumo informado")
+    public ResponseEntity<List<EstoqueDTO>> findByInsumo(@PathVariable Long insumoId) {
+        return ResponseEntity.ok(service.findByInsumoId(insumoId));
+    }
+    
     @PostMapping
     @Operation(summary = "Criar novo registro de estoque", description = "Cria um novo registro de estoque para um insumo")
     public ResponseEntity<EstoqueDTO> create(@RequestBody EstoqueDTO dto) {

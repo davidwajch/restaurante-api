@@ -82,6 +82,12 @@ public class EstoqueService {
                 .collect(Collectors.toList());
     }
     
+    public List<EstoqueDTO> findByInsumoId(Long insumoId) {
+        return repository.findAllByInsumoId(insumoId).stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+    }
+    
     private EstoqueDTO toDTO(Estoque estoque) {
         EstoqueDTO dto = new EstoqueDTO();
         dto.setId(estoque.getId());

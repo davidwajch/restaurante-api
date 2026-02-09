@@ -1,5 +1,6 @@
 package com.restaurantes.restaurante_api.controller;
 
+import com.restaurantes.restaurante_api.dto.AdicionarItemPedidoRequest;
 import com.restaurantes.restaurante_api.dto.PedidoDTO;
 import com.restaurantes.restaurante_api.service.PedidoService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,6 +36,12 @@ public class PedidoController {
     @Operation(summary = "Criar novo pedido", description = "Cria um novo pedido no sistema com seus itens")
     public ResponseEntity<PedidoDTO> create(@RequestBody PedidoDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.save(dto));
+    }
+    
+    @PostMapping("/{id}/itens")
+    @Operation(summary = "Adicionar item ao pedido", description = "Adiciona um produto ao pedido com a quantidade informada. Retorna o pedido atualizado com a lista de itens.")
+    public ResponseEntity<PedidoDTO> adicionarItem(@PathVariable Long id, @RequestBody AdicionarItemPedidoRequest request) {
+        return ResponseEntity.ok(service.adicionarItem(id, request));
     }
     
     @PutMapping("/{id}/fechar")

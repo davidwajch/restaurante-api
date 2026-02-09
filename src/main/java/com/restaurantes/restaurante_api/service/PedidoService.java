@@ -1,5 +1,6 @@
 package com.restaurantes.restaurante_api.service;
 
+import com.restaurantes.restaurante_api.dto.AdicionarItemPedidoRequest;
 import com.restaurantes.restaurante_api.dto.PedidoDTO;
 import com.restaurantes.restaurante_api.dto.PedidoItemDTO;
 import com.restaurantes.restaurante_api.model.*;
@@ -113,6 +114,33 @@ public class PedidoService {
         return repository.findByStatus(status).stream()
                 .map(this::toDTO)
                 .collect(Collectors.toList());
+    }
+    
+    @Transactional
+    public PedidoDTO adicionarItem(Long pedidoId, AdicionarItemPedidoRequest request) {
+        Pedido pedido = repository.findById(pedidoId)
+                .orElseThrow(() -> new RuntimeException("Pedido não encontrado"));
+        if (pedido.getStatus() != 0) {
+            throw new RuntimeException("Somente é possível adicionar itens a pedidos abertos");
+        }
+        Produto produto = produtoRepository.findById(request.getProdutoId())
+                .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
+        if (request.getQuantidade() == null || request.getQuantidade() <= 0) {
+            throw new RuntimeException("Quantidade deve ser maior que zero");
+        }
+        if (pedido.getItens() == null) {
+            pedido.setItens(new ArrayList<>());
+        }
+        PedidoItem item = new PedidoItem();
+        item.setPedido(pedido);
+        item.setProduto(produto);
+        item.setQuantidade(request.getQuantidade());
+        item.setDataCriacao(LocalDateTime.now());
+        pedido.getItens().add(item);
+        BigDecimal itemTotal = produto.getPrecoVenda().multiply(BigDecimal.valueOf(request.getQuantidade()));
+        pedido.setTotal(pedido.getTotal().add(itemTotal));
+        pedido = repository.save(pedido);
+        return toDTO(pedido);
     }
     
     private PedidoDTO toDTO(Pedido pedido) {

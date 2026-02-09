@@ -12,6 +12,7 @@ import java.util.Optional;
 @Repository
 public interface EstoqueRepository extends JpaRepository<Estoque, Long> {
     Optional<Estoque> findByInsumoId(Long insumoId);
+    List<Estoque> findAllByInsumoId(Long insumoId);
     List<Estoque> findByDataValidadeBefore(LocalDate data);
     List<Estoque> findByQuantidadeAtualLessThanEqual(BigDecimal quantidade);
 }
