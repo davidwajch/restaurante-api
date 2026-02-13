@@ -85,6 +85,11 @@ public class FichaTecnicaService {
                 .collect(Collectors.toList());
     }
     
+    @Transactional
+    public void deleteByProdutoId(Long produtoId) {
+        repository.deleteByProdutoId(produtoId);
+    }
+    
     private FichaTecnicaDTO toDTO(FichaTecnica ficha) {
         FichaTecnicaDTO dto = new FichaTecnicaDTO();
         dto.setId(ficha.getId());

@@ -23,12 +23,19 @@ CREATE TABLE IF NOT EXISTS insumos (
     unidade_medida VARCHAR(255) NOT NULL
 );
 
+-- Tabela de Categorias (antes de produtos, por causa da FK)
+CREATE TABLE IF NOT EXISTS categorias (
+    id BIGSERIAL PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL
+);
+
 -- Tabela de Produtos
 CREATE TABLE IF NOT EXISTS produtos (
     id BIGSERIAL PRIMARY KEY,
     nome VARCHAR(255) NOT NULL,
     preco_venda NUMERIC(10,2) NOT NULL,
-    categoria_id BIGINT
+    categoria_id BIGINT,
+    CONSTRAINT fk_produtos_categoria FOREIGN KEY (categoria_id) REFERENCES categorias(id)
 );
 
 -- Tabela de Pedidos
@@ -83,6 +90,7 @@ CREATE TABLE IF NOT EXISTS estoque (
 COMMENT ON TABLE funcionarios IS 'Cadastro de funcionários e seus cargos';
 COMMENT ON TABLE mesas IS 'Cadastro de mesas do restaurante';
 COMMENT ON TABLE insumos IS 'Cadastro de insumos/ingredientes';
+COMMENT ON TABLE categorias IS 'Categorias de produtos do cardápio';
 COMMENT ON TABLE produtos IS 'Cadastro de produtos do cardápio';
 COMMENT ON TABLE pedidos IS 'Pedidos realizados no restaurante';
 COMMENT ON TABLE pedido_itens IS 'Itens de cada pedido';

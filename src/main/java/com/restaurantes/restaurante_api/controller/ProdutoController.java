@@ -1,9 +1,12 @@
 package com.restaurantes.restaurante_api.controller;
 
+import com.restaurantes.restaurante_api.dto.ProdutoComFichaTecnicaRequest;
+import com.restaurantes.restaurante_api.dto.ProdutoComFichaTecnicaResponse;
 import com.restaurantes.restaurante_api.dto.ProdutoDTO;
 import com.restaurantes.restaurante_api.service.ProdutoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +38,12 @@ public class ProdutoController {
     @Operation(summary = "Criar novo produto", description = "Cria um novo produto no cardápio")
     public ResponseEntity<ProdutoDTO> create(@RequestBody ProdutoDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.save(dto));
+    }
+    
+    @PostMapping("/com-ficha-tecnica")
+    @Operation(summary = "Criar produto com ficha técnica", description = "Cria um novo produto e suas fichas técnicas (insumos e quantidades) em uma única requisição")
+    public ResponseEntity<ProdutoComFichaTecnicaResponse> createComFichaTecnica(@Valid @RequestBody ProdutoComFichaTecnicaRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.saveComFichaTecnica(request));
     }
     
     @PutMapping("/{id}")
