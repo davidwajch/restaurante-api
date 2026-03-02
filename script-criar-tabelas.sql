@@ -59,6 +59,7 @@ CREATE TABLE IF NOT EXISTS pedido_itens (
     pedido_id BIGINT NOT NULL,
     produto_id BIGINT NOT NULL,
     quantidade INTEGER NOT NULL,
+    observacao VARCHAR(255),
     data_criacao TIMESTAMP NOT NULL,
     CONSTRAINT fk_pedido_itens_pedido FOREIGN KEY (pedido_id) REFERENCES pedidos(id),
     CONSTRAINT fk_pedido_itens_produto FOREIGN KEY (produto_id) REFERENCES produtos(id)

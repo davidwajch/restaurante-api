@@ -15,5 +15,6 @@ public class PedidoItemDTO {
     private Long produtoId;
     private String produtoNome;
     private Integer quantidade;
+    private String observacao;
     private LocalDateTime dataCriacao;
 }

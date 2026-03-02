@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class AdicionarItemPedidoRequest {
     private Long produtoId;
     private Integer quantidade;
+    private String observacao;
 }

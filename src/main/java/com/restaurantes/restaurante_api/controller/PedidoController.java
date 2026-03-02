@@ -1,15 +1,18 @@
 package com.restaurantes.restaurante_api.controller;
 
 import com.restaurantes.restaurante_api.dto.AdicionarItemPedidoRequest;
+import com.restaurantes.restaurante_api.dto.HistoricoPedidosResumoDTO;
 import com.restaurantes.restaurante_api.dto.PedidoDTO;
 import com.restaurantes.restaurante_api.service.PedidoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -49,6 +52,18 @@ public class PedidoController {
     public ResponseEntity<PedidoDTO> fecharPedido(@PathVariable Long id, @RequestParam Long caixaId) {
         return ResponseEntity.ok(service.fecharPedido(id, caixaId));
     }
+
+    @PutMapping("/{id}/cancelar")
+    @Operation(summary = "Cancelar pedido", description = "Marca o pedido como cancelado (status 2). Somente pedidos abertos podem ser cancelados. Mantém o registro para contabilidade.")
+    public ResponseEntity<PedidoDTO> cancelarPedido(@PathVariable Long id) {
+        return ResponseEntity.ok(service.cancelarPedido(id));
+    }
+
+    @DeleteMapping("/{pedidoId}/itens/{itemId}")
+    @Operation(summary = "Remover item do pedido", description = "Remove um item do pedido e recalcula o total. Somente em pedidos abertos.")
+    public ResponseEntity<PedidoDTO> removerItem(@PathVariable Long pedidoId, @PathVariable Long itemId) {
+        return ResponseEntity.ok(service.removerItem(pedidoId, itemId));
+    }
     
     @DeleteMapping("/{id}")
     @Operation(summary = "Excluir pedido", description = "Remove um pedido do sistema")
@@ -67,5 +82,27 @@ public class PedidoController {
     @Operation(summary = "Buscar pedidos por status", description = "Retorna pedidos filtrados por status (0=Aberto, 1=Fechado, 2=Cancelado)")
     public ResponseEntity<List<PedidoDTO>> findByStatus(@PathVariable Integer status) {
         return ResponseEntity.ok(service.findByStatus(status));
+    }
+
+    @GetMapping("/historico")
+    @Operation(
+            summary = "Histórico de pedidos fechados",
+            description = "Retorna a lista de pedidos fechados no período (para contabilidade). Parâmetros: dataInicio e dataFim no formato yyyy-MM-dd."
+    )
+    public ResponseEntity<List<PedidoDTO>> findHistorico(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataInicio,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFim) {
+        return ResponseEntity.ok(service.findHistoricoFechados(dataInicio, dataFim));
+    }
+
+    @GetMapping("/historico/resumo")
+    @Operation(
+            summary = "Resumo contábil do histórico",
+            description = "Retorna resumo do período: quantidade de pedidos fechados, valor total e lista detalhada (para contabilidade)."
+    )
+    public ResponseEntity<HistoricoPedidosResumoDTO> getResumoContabilidade(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataInicio,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFim) {
+        return ResponseEntity.ok(service.getResumoContabilidade(dataInicio, dataFim));
     }
 }

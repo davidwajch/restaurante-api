@@ -29,6 +29,9 @@ public class PedidoItem {
     @Column(nullable = false)
     private Integer quantidade;
     
+    @Column(name = "observacao")
+    private String observacao;
+    
     @Column(name = "data_criacao", nullable = false)
     private LocalDateTime dataCriacao;
 }
