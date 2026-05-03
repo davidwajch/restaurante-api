@@ -1,80 +1,69 @@
-# Comandos Docker para Banco de Dados
+# Docker — PostgreSQL (Restaurante API)
 
-## Opção 1: Usando Docker Compose (Recomendado)
+Use o arquivo **`.env`** na raiz do projeto (copie de `.env.example`). O `docker compose` lê `POSTGRES_USER`, `POSTGRES_PASSWORD` e `POSTGRES_DB` a partir dele.
 
-### 1. Iniciar o banco de dados
+## Opção 1: Docker Compose (recomendado)
+
+### 1. Criar `.env`
+
 ```bash
-docker-compose up -d
+copy .env.example .env
 ```
 
-### 2. Verificar se o container está rodando
+Edite `.env` e defina `POSTGRES_PASSWORD` (e alinhe `SPRING_DATASOURCE_PASSWORD` na mesma senha para rodar a API localmente).
+
+### 2. Subir o banco
+
+```bash
+docker compose up -d
+```
+
+### 3. Verificar container
+
 ```bash
 docker ps
 ```
 
-### 3. Parar o banco de dados
+### 4. Parar
+
 ```bash
-docker-compose down
+docker compose down
 ```
 
-### 4. Parar e remover volumes (apaga os dados)
+### 5. Parar e apagar volumes (apaga dados)
+
 ```bash
-docker-compose down -v
+docker compose down -v
 ```
 
-### 5. Ver logs do container
+### 6. Logs
+
 ```bash
-docker-compose logs -f postgres
+docker compose logs -f postgres
 ```
 
-## Opção 2: Usando Docker diretamente
+## Opção 2: Docker run manual
 
-### 1. Criar e iniciar o container PostgreSQL
-```bash
-docker run --name restaurante-postgres \
-  -e POSTGRES_USER=postgres \
-  -e POSTGRES_PASSWORD=Restaurante@2024 \
-  -e POSTGRES_DB=restaurante_db \
-  -p 5433:5432 \
+Defina a senha no ambiente (PowerShell):
+
+```powershell
+$env:POSTGRES_PASSWORD = "sua-senha-aqui"
+docker run --name restaurante-postgres `
+  -e POSTGRES_USER=postgres `
+  -e POSTGRES_PASSWORD=$env:POSTGRES_PASSWORD `
+  -e POSTGRES_DB=restaurante_db `
+  -p 5433:5432 `
   -d postgres:15-alpine
 ```
 
-### 2. Verificar se o container está rodando
-```bash
-docker ps
-```
+Ajuste `SPRING_DATASOURCE_URL`, `SPRING_DATASOURCE_USERNAME` e `SPRING_DATASOURCE_PASSWORD` ao rodar a aplicação Spring Boot.
 
-### 3. Parar o container
-```bash
-docker stop restaurante-postgres
-```
+## psql (opcional)
 
-### 4. Iniciar o container novamente
-```bash
-docker start restaurante-postgres
-```
-
-### 5. Remover o container
-```bash
-docker rm -f restaurante-postgres
-```
-
-### 6. Acessar o banco via psql (opcional)
 ```bash
 docker exec -it restaurante-postgres psql -U postgres -d restaurante_db
 ```
 
-## Configuração
+## Conexão da aplicação
 
-O banco de dados será criado automaticamente com:
-- **Host:** localhost
-- **Porta:** 5433
-- **Usuário:** postgres
-- **Senha:** Restaurante@2024
-- **Database:** restaurante_db
-
-Essas configurações já estão no arquivo `application.properties`.
-
-## Verificar conexão
-
-Após iniciar o container, você pode testar a conexão executando a aplicação Spring Boot. As tabelas serão criadas automaticamente pelo Hibernate.
+A API usa `SPRING_DATASOURCE_*` definidos no ambiente ou na sua IDE. Não commite senhas em `application.properties`.
